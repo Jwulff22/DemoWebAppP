@@ -99,13 +99,13 @@ const DEPT_MSGS = [
 
 // Notification feed items (mix of system events + messages)
 const NOTIF_FEED = [
-  {id:101,type:"byt",    icon:"🔄",title:"Byt godkendt",    body:"Din bytteforespørgsel med Lone Pedersen er godkendt.",  time:"I dag 09:12", read:false, action:{tab:"anmodninger"}},
-  {id:102,type:"besked", icon:"✉️",title:"Ny besked",        body:"Skemalægger: \"Ønsker til uge 22–26\"",                 time:"I dag 08:30", read:false, action:{tab:"beskeder"}},
-  {id:103,type:"udbud",  icon:"📢",title:"Ny udbudt tjeneste",body:"Dag3 08:00–16:00 på Man 2 mar er ledig.",              time:"I går 17:45", read:false, action:{tab:"anmodninger"}},
-  {id:104,type:"besked", icon:"✉️",title:"Ny besked",        body:"Skemalægger: \"Vagtplan uge 11 er klar\"",              time:"I går 08:45", read:true,  action:{tab:"beskeder"}},
-  {id:105,type:"onske",  icon:"📋",title:"Ønske afvist",      body:"Dit ønske om Skånedag den 5. mar er afvist.",          time:"Man 09:00",   read:true,  action:{tab:"anmodninger"}},
-  {id:106,type:"besked", icon:"✉️",title:"Ny besked fra Admin",body:"Admin: \"Sommerferieplan 2026\"",                     time:"Søn 10:14",   read:true,  action:{tab:"beskeder"}},
-  {id:107,type:"byt",    icon:"🔄",title:"Bytteforespørgsel", body:"Henrik Jensen vil bytte Aft 15:00–23:00 med dig.",     time:"Lør 14:22",   read:true,  action:{tab:"anmodninger"}},
+  {id:101,type:"byt",    title:"Byt godkendt",    body:"Din bytteforespørgsel med Lone Pedersen er godkendt.",  time:"I dag 09:12", read:false, action:{tab:"anmodninger"}},
+  {id:102,type:"besked", title:"Ny besked",        body:"Skemalægger: \"Ønsker til uge 22–26\"",                 time:"I dag 08:30", read:false, action:{tab:"beskeder"}},
+  {id:103,type:"udbud",  title:"Ny udbudt tjeneste",body:"Dag3 08:00–16:00 på Man 2 mar er ledig.",              time:"I går 17:45", read:false, action:{tab:"anmodninger"}},
+  {id:104,type:"besked", title:"Ny besked",        body:"Skemalægger: \"Vagtplan uge 11 er klar\"",              time:"I går 08:45", read:true,  action:{tab:"beskeder"}},
+  {id:105,type:"onske",  title:"Ønske afvist",      body:"Dit ønske om Skånedag den 5. mar er afvist.",          time:"Man 09:00",   read:true,  action:{tab:"anmodninger"}},
+  {id:106,type:"besked", title:"Ny besked fra Admin",body:"Admin: \"Sommerferieplan 2026\"",                     time:"Søn 10:14",   read:true,  action:{tab:"beskeder"}},
+  {id:107,type:"byt",    title:"Bytteforespørgsel", body:"Henrik Jensen vil bytte Aft 15:00–23:00 med dig.",     time:"Lør 14:22",   read:true,  action:{tab:"anmodninger"}},
 ];
 
 const CONTACTS = [
@@ -122,17 +122,53 @@ const CONTACTS = [
 ];
 
 const NOTIF_TYPES=[
-  {key:"Tidsregistrering",label:"Tidsregistrering",  icon:"⏱️"},
-  {key:"Byt",             label:"Byt",               icon:"🔄"},
-  {key:"Onske",           label:"Ønsker",            icon:"📋"},
-  {key:"Udbud",           label:"Udbudte tjenester", icon:"📢"},
-  {key:"Beskeder",        label:"Beskeder",          icon:"✉️"},
-  {key:"Glob",            label:"Globale meddelelser",icon:"📣"},
+  {key:"Tidsregistrering",label:"Tidsregistrering"},
+  {key:"Byt",             label:"Byt"},
+  {key:"Onske",           label:"Ønsker"},
+  {key:"Udbud",           label:"Udbudte tjenester"},
+  {key:"Beskeder",        label:"Beskeder"},
+  {key:"Glob",            label:"Globale meddelelser"},
 ];
 
 // ── Shared atoms ──────────────────────────────────────────────────────────────
 function Badge({label,color}){return <span style={{background:color,color:"#fff",borderRadius:20,padding:"3px 10px",fontSize:12,fontWeight:600,whiteSpace:"nowrap"}}>{label}</span>;}
 function ShiftBadge({code,color}){return <span style={{background:color,color:"#fff",borderRadius:12,padding:"2px 9px",fontSize:12,fontWeight:700,marginRight:8}}>{code}</span>;}
+
+// ── SVG Icons (no emojis) ─────────────────────────────────────────────────────
+function Icon({name,size=18,color="currentColor",strokeWidth=2}){
+  const s={width:size,height:size,display:"block",flexShrink:0};
+  const p={fill:"none",stroke:color,strokeWidth,strokeLinecap:"round",strokeLinejoin:"round"};
+  switch(name){
+    case"swap":   return <svg style={s} viewBox="0 0 24 24" {...p}><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>;
+    case"mail":   return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
+    case"megaphone":return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>;
+    case"clipboard":return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
+    case"clock":  return <svg style={s} viewBox="0 0 24 24" {...p}><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>;
+    case"bell":   return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>;
+    case"check":  return <svg style={s} viewBox="0 0 24 24" {...p}><polyline points="20 6 9 17 4 12"/></svg>;
+    case"x":      return <svg style={s} viewBox="0 0 24 24" {...p}><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+    case"alert":  return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>;
+    case"hourglass":return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M5 22h14"/><path d="M5 2h14"/><path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/><path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/></svg>;
+    case"lock":   return <svg style={s} viewBox="0 0 24 24" {...p}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>;
+    case"circle": return <svg style={s} viewBox="0 0 24 24" {...p}><circle cx="12" cy="12" r="10"/></svg>;
+    case"phone":  return <svg style={s} viewBox="0 0 24 24" {...p}><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.46 2 2 0 0 1 3.6 1.28h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6 6l.95-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.92z"/></svg>;
+    case"search": return <svg style={s} viewBox="0 0 24 24" {...p}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
+    case"chevron-right":return <svg style={s} viewBox="0 0 24 24" {...p}><polyline points="9 18 15 12 9 6"/></svg>;
+    case"dot-green":return <svg style={s} viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill={color} stroke="none"/></svg>;
+    default: return null;
+  }
+}
+
+function notifTypeIcon(type, active){
+  const color = active ? GREEN : "#9CA3AF";
+  switch(type){
+    case"byt":    return <Icon name="swap"      size={18} color={color}/>;
+    case"besked": return <Icon name="mail"      size={18} color={color}/>;
+    case"udbud":  return <Icon name="megaphone" size={18} color={color}/>;
+    case"onske":  return <Icon name="clipboard" size={18} color={color}/>;
+    default:      return <Icon name="bell"      size={18} color={color}/>;
+  }
+}
 function Card({children,onClick,style={}}){return <div onClick={onClick} style={{background:"#fff",borderRadius:16,padding:"16px 18px",marginBottom:12,boxShadow:"0 1px 4px rgba(0,0,0,0.07)",cursor:onClick?"pointer":"default",...style}}>{children}</div>;}
 function Divider(){return <div style={{height:1,background:"#f0f0f0",margin:"4px 0"}}/>;}
 function BackBtn({onBack,label="← Tilbage"}){return <button onClick={onBack} style={{background:"none",border:"none",color:GREEN,fontWeight:600,fontSize:15,cursor:"pointer",marginBottom:14,padding:0}}>{label}</button>;}
@@ -172,7 +208,7 @@ function NotifPanel({onClose, onNavigate, readNotifIds, markRead}){
                 boxShadow:n.read?"none":"0 2px 8px rgba(45,106,79,0.12)"}}>
               {/* icon + unread dot */}
               <div style={{position:"relative",flexShrink:0}}>
-                <div style={{width:40,height:40,borderRadius:"50%",background:n.read?"#f3f4f6":GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center",fontSize:18}}>{n.icon}</div>
+                <div style={{width:40,height:40,borderRadius:"50%",background:n.read?"#f3f4f6":GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center"}}>{notifTypeIcon(n.type, !n.read)}</div>
                 {!n.read&&<div style={{position:"absolute",top:0,right:0,width:10,height:10,borderRadius:"50%",background:BADGE_RED,border:"2px solid #fff"}}/>}
               </div>
               <div style={{flex:1,minWidth:0}}>
@@ -745,10 +781,10 @@ function AfdelingsplanScreen(){
 function ShiftDetailScreen({shift,onBack,onCreateByt,onCreateOnske}){
   // Find tidsregistrering for this shift
   const tidsreg = TIMEREGISTRATIONS.find(t=>t.month===shift.month&&t.day===shift.day);
-  const trColors={godkendt:{bg:"#f0fdf4",border:GREEN,text:GREEN,icon:"✅"},
-    afventer:{bg:"#fffbeb",border:BADGE_YELLOW,text:"#92400e",icon:"⏳"},
-    afvist:{bg:"#fef2f2",border:BADGE_RED,text:BADGE_RED,icon:"❌"},
-    mangler:{bg:"#fef2f2",border:BADGE_RED,text:BADGE_RED,icon:"⚠️"}};
+  const trColors={godkendt:{bg:"#f0fdf4",border:GREEN,text:GREEN,icon:"check"},
+    afventer:{bg:"#fffbeb",border:BADGE_YELLOW,text:"#92400e",icon:"hourglass"},
+    afvist:{bg:"#fef2f2",border:BADGE_RED,text:BADGE_RED,icon:"x"},
+    mangler:{bg:"#fef2f2",border:BADGE_RED,text:BADGE_RED,icon:"alert"}};
   const trLabels={godkendt:"Tidsregistrering godkendt",afventer:"Afventer godkendelse",afvist:"Tidsregistrering afvist",mangler:"Mangler tidsregistrering"};
   const wa = shift.year&&shift.month&&shift.day ? getWeekApproval(shift.year,shift.month,shift.day) : null;
   return(
@@ -766,7 +802,7 @@ function ShiftDetailScreen({shift,onBack,onCreateByt,onCreateOnske}){
           return (
             <div style={{background:cfg.bg,border:`1px solid ${cfg.border}`,borderRadius:10,padding:"10px 12px",marginBottom:16}}>
               <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:tidsreg.regStart?4:0}}>
-                <span style={{fontSize:15}}>{cfg.icon}</span>
+                <span style={{display:"flex",alignItems:"center"}}><Icon name={cfg.icon} size={15} color={cfg.text}/></span>
                 <span style={{fontSize:13,fontWeight:700,color:cfg.text}}>{trLabels[tidsreg.status]}</span>
               </div>
               {tidsreg.regStart && <div style={{fontSize:12,color:"#888",paddingLeft:23}}>
@@ -782,8 +818,8 @@ function ShiftDetailScreen({shift,onBack,onCreateByt,onCreateOnske}){
             </div>
           );
         })()}
-        {!tidsreg && <div style={{background:"#f9fafb",border:"1px solid #e5e7eb",borderRadius:10,padding:"10px 12px",marginBottom:16,fontSize:13,color:"#aaa"}}>
-          ⏱ Ingen tidsregistrering endnu
+        {!tidsreg && <div style={{background:"#f9fafb",border:"1px solid #e5e7eb",borderRadius:10,padding:"10px 12px",marginBottom:16,fontSize:13,color:"#aaa",display:"flex",alignItems:"center",gap:8}}>
+          <Icon name="clock" size={14} color="#aaa"/> Ingen tidsregistrering endnu
         </div>}
         <div style={{display:"flex",gap:10}}>
           <button onClick={()=>onCreateByt(shift)} style={{...btnP,flex:1}}>Opret byt</button>
@@ -932,15 +968,15 @@ function DialogplanScreen({onBack, embedded=false}) {
 
   // Status colors
   const wCfg = {
-    ønsket:   {bg:"#dbeafe", border:"#3B82F6", text:BADGE_BLUE,   icon:"✓"},
-    godkendt: {bg:"#dcfce7", border:GREEN,      text:GREEN,        icon:"✅"},
-    afvist:   {bg:"#fee2e2", border:BADGE_RED,  text:BADGE_RED,    icon:"✗"},
+    ønsket:   {bg:"#dbeafe", border:"#3B82F6", text:BADGE_BLUE,   icon:"check"},
+    godkendt: {bg:"#dcfce7", border:GREEN,      text:GREEN,        icon:"check"},
+    afvist:   {bg:"#fee2e2", border:BADGE_RED,  text:BADGE_RED,    icon:"x"},
   };
 
   const periodStatusCfg = {
-    aktiv:     {bg:"#dcfce7", text:GREEN,        label:"Ønskeperiode åben",  icon:"🟢"},
-    lukket:    {bg:"#f3f4f6", text:"#6B7280",    label:"Periode lukket",     icon:"🔒"},
-    udruller:  {bg:"#fffbeb", text:"#92400e",    label:"Planen udrulles",    icon:"⏳"},
+    aktiv:     {bg:"#dcfce7", text:GREEN,        label:"Ønskeperiode åben",  icon:"circle"},
+    lukket:    {bg:"#f3f4f6", text:"#6B7280",    label:"Periode lukket",     icon:"lock"},
+    udruller:  {bg:"#fffbeb", text:"#92400e",    label:"Planen udrulles",    icon:"hourglass"},
   };
   const psc = periodStatusCfg[period.status];
 
@@ -955,7 +991,7 @@ function DialogplanScreen({onBack, embedded=false}) {
           <div style={{color:"#888",fontSize:13,marginTop:2}}>Dialogbaseret planlægning</div>
         </div>
         <div style={{background:psc.bg,borderRadius:20,padding:"4px 10px",fontSize:11,fontWeight:700,color:psc.text,display:"flex",alignItems:"center",gap:4,marginTop:4}}>
-          {psc.icon} {psc.label}
+          <Icon name={psc.icon} size={12} color={psc.text}/> {psc.label}
         </div>
       </div>
 
@@ -976,7 +1012,7 @@ function DialogplanScreen({onBack, embedded=false}) {
         <div style={{fontWeight:700,fontSize:14,marginBottom:4}}>{period.name}</div>
         <div style={{color:"#888",fontSize:12,marginBottom:isActive?8:0}}>{period.description}</div>
         {isActive && <div style={{display:"flex",alignItems:"center",gap:6,marginTop:4}}>
-          <span style={{fontSize:12,color:BADGE_RED,fontWeight:700}}>⏰ Deadline: {period.deadline}</span>
+          <span style={{fontSize:12,color:BADGE_RED,fontWeight:700,display:"flex",alignItems:"center",gap:4}}><Icon name="clock" size={12} color={BADGE_RED}/> Deadline: {period.deadline}</span>
         </div>}
         {!isActive && <div style={{marginTop:6,fontSize:12,color:"#6B7280"}}>
           ✓ {totalGodkendt} godkendt · ✗ {totalAfvist} afvist
@@ -1077,7 +1113,7 @@ function DialogplanScreen({onBack, embedded=false}) {
                           ? <span style={{color:"#d1d5db",fontSize:10}}>–</span>
                           : cfg
                             ? <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:1}}>
-                                <span style={{fontSize:14,color:cfg.text,fontWeight:700}}>{cfg.icon}</span>
+                                <Icon name={cfg.icon} size={14} color={cfg.text}/>
                                 {w==="godkendt"&&<span style={{fontSize:8,color:cfg.text}}>Godk.</span>}
                                 {w==="afvist"&&<span style={{fontSize:8,color:cfg.text}}>Afvist</span>}
                               </div>
@@ -1113,7 +1149,7 @@ function DialogplanScreen({onBack, embedded=false}) {
       )}
       {!isActive && (
         <div style={{background:"#f3f4f6",borderRadius:12,padding:"14px 16px",marginBottom:20,textAlign:"center"}}>
-          <div style={{fontSize:13,color:"#6B7280"}}>🔒 Ønskeperioden er lukket</div>
+          <div style={{fontSize:13,color:"#6B7280",display:"flex",alignItems:"center",gap:6}}><Icon name="lock" size={13} color="#6B7280"/> Ønskeperioden er lukket</div>
           <div style={{fontSize:12,color:"#aaa",marginTop:4}}>Skemalæggeren er i gang med at pusle planen</div>
         </div>
       )}
@@ -1162,7 +1198,7 @@ function AnmodningerScreen({onBytDetail,onOnskeDetail,onUdbudDetail,showCreate,s
             <div style={{fontWeight:700,fontSize:17,marginBottom:16}}>Opret</div>
             <button onClick={onCreateByt} style={{...btnP,width:"100%",marginBottom:12}}>Opret byt</button>
             <button onClick={onCreateOnske} style={{...btnS,width:"100%",marginBottom:12}}>Opret ønske</button>
-            <button onClick={onGoDialogplan} style={{...btnS,width:"100%",marginBottom:12,borderColor:GREEN,color:GREEN}}>📋 Åbn dialogplan</button>
+            <button onClick={onGoDialogplan} style={{...btnS,width:"100%",marginBottom:12,borderColor:GREEN,color:GREEN,display:"flex",alignItems:"center",justifyContent:"center",gap:6}}><Icon name="clipboard" size={14} color={GREEN}/> Åbn dialogplan</button>
             <button onClick={()=>setCreate(false)} style={{background:"none",border:"none",width:"100%",fontWeight:600,fontSize:15,cursor:"pointer",padding:10,color:"#333"}}>Annuller</button>
           </div>
         </div>
@@ -1262,22 +1298,22 @@ function WeekApprovalBanner({year, month, day, compact=false}) {
   const wn = getWeekNumber(year, month, day);
   if (!wa) return null;
   const cfg = {
-    godkendt:      {bg:"#f0fdf4", border:GREEN,         text:GREEN,     icon:"✓",  sub:"Planen er godkendt af skemalægger"},
-    igangvaerende: {bg:"#fffbeb", border:BADGE_YELLOW,  text:"#92400e", icon:"⏳", sub:"Afventer godkendelse fra skemalægger"},
-    ikke_godkendt: {bg:"#f9fafb", border:"#d1d5db",     text:"#6B7280", icon:"○",  sub:"Endnu ikke behandlet"},
+    godkendt:      {bg:"#f0fdf4", border:GREEN,         text:GREEN,     icon:"check",  sub:"Planen er godkendt af skemalægger"},
+    igangvaerende: {bg:"#fffbeb", border:BADGE_YELLOW,  text:"#92400e", icon:"clock", sub:"Afventer godkendelse fra skemalægger"},
+    ikke_godkendt: {bg:"#f9fafb", border:"#d1d5db",     text:"#6B7280", icon:"circle",  sub:"Endnu ikke behandlet"},
   };
   const s = cfg[wa.status] || cfg.ikke_godkendt;
   const label = "Uge "+wn+" · "+{godkendt:"Godkendt",igangvaerende:"Igangværende",ikke_godkendt:"Ikke godkendt"}[wa.status];
   if (compact) return (
     <span style={{display:"inline-flex",alignItems:"center",gap:4,background:s.bg,
       border:`1px solid ${s.border}`,borderRadius:20,padding:"2px 9px",fontSize:11,fontWeight:700,color:s.text,whiteSpace:"nowrap"}}>
-      {s.icon} {label}
+      <Icon name={s.icon} size={11} color={s.text}/> {label}
     </span>
   );
   return (
     <div style={{background:s.bg,border:`1px solid ${s.border}`,borderRadius:12,
       padding:"10px 14px",marginBottom:12,display:"flex",alignItems:"center",gap:10}}>
-      <div style={{width:32,height:32,borderRadius:"50%",background:s.border+"22",display:"flex",alignItems:"center",justifyContent:"center",fontSize:16,flexShrink:0}}>{s.icon}</div>
+      <div style={{width:32,height:32,borderRadius:"50%",background:s.border+"22",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}><Icon name={s.icon} size={16} color={s.text}/></div>
       <div>
         <div style={{fontSize:13,fontWeight:700,color:s.text,lineHeight:1.3}}>{label}</div>
         <div style={{fontSize:11,color:s.text,opacity:0.75}}>{s.sub}</div>
@@ -1307,10 +1343,10 @@ function TimeDiff({plan, reg}) {
 }
 
 function TidsregStatusIcon({status}) {
-  if (status==="godkendt")  return <span style={{fontSize:16}} title="Godkendt">✅</span>;
-  if (status==="afventer")  return <span style={{fontSize:16}} title="Afventer godkendelse">⏳</span>;
-  if (status==="afvist")    return <span style={{fontSize:16}} title="Afvist">❌</span>;
-  if (status==="mangler")   return <span style={{fontSize:16}} title="Mangler registrering">⚠️</span>;
+  if (status==="godkendt")  return <Icon name="check"     size={16} color={GREEN}        title="Godkendt"/>;
+  if (status==="afventer")  return <Icon name="hourglass" size={16} color={BADGE_YELLOW} title="Afventer godkendelse"/>;
+  if (status==="afvist")    return <Icon name="x"         size={16} color={BADGE_RED}    title="Afvist"/>;
+  if (status==="mangler")   return <Icon name="alert"     size={16} color={BADGE_RED}    title="Mangler registrering"/>;
   return null;
 }
 
@@ -1441,14 +1477,14 @@ function SaldiScreen({embedded=false}){
           const bgC     = planStatusColors[w.status];
           const textC   = planStatusTextColor[w.status];
           const label   = planStatusLabel[w.status];
-          const icon    = w.status==="godkendt"?"✓":w.status==="igangvaerende"?"⏳":"○";
+          const iconName = w.status==="godkendt"?"check":w.status==="igangvaerende"?"hourglass":"circle";
           return (
             <div key={w.uge} style={{background:"#fff",borderRadius:16,padding:"14px 16px",marginBottom:10,
               border:`1.5px solid ${borderC}`,borderLeft:`5px solid ${borderC}`}}>
               <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:8}}>
                 <div style={{fontWeight:700,fontSize:16}}>Uge {w.uge}</div>
-                <div style={{background:bgC,color:textC,borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,border:`1px solid ${borderC}40`}}>
-                  {icon} {label}
+                <div style={{background:bgC,color:textC,borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,border:`1px solid ${borderC}40`,display:"flex",alignItems:"center",gap:4}}>
+                  <Icon name={iconName} size={11} color={textC}/> {label}
                 </div>
               </div>
               <div style={{fontSize:12,color:"#888",marginBottom:8}}>{w.days[0].split(" ").slice(1).join(" ")} – {w.days[6].split(" ").slice(1).join(" ")}</div>
@@ -1612,7 +1648,10 @@ function VejviserScreen({onContactClick}){
   return(
     <div style={{padding:"16px 16px 0"}}>
       <div style={{fontWeight:700,fontSize:24,marginBottom:12}}>Vejviser</div>
-      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍  Søg navn eller stilling..." style={{...inp,marginBottom:20}}/>
+      <div style={{position:"relative",marginBottom:20}}>
+        <svg style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Søg navn eller stilling..." style={{...inp,paddingLeft:38}}/>
+      </div>
       {Object.keys(groups).sort().map(letter=>(
         <div key={letter}>
           <div style={{fontWeight:700,fontSize:13,color:GREEN,marginBottom:6,marginTop:4,letterSpacing:1}}>{letter}</div>
@@ -1621,7 +1660,7 @@ function VejviserScreen({onContactClick}){
               <div style={{display:"flex",alignItems:"center",gap:14}}>
                 <div style={{width:44,height:44,borderRadius:"50%",background:GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:GREEN,flexShrink:0}}>{c.name.split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
                 <div style={{flex:1}}><div style={{fontWeight:700,fontSize:15}}>{c.name}</div><div style={{color:"#888",fontSize:13}}>{c.title}</div></div>
-                {c.showPrivate&&<span style={{fontSize:12,color:GREEN}}>📞</span>}
+                {c.showPrivate&&<Icon name="phone" size={14} color={GREEN}/>}
               </div>
             </Card>
           ))}
@@ -1644,17 +1683,17 @@ function ContactDetailScreen({contact,onBack}){
         <Divider/>
         <div style={{marginTop:14}}>
           <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:10,textTransform:"uppercase",letterSpacing:0.5}}>Arbejde</div>
-          {contact.work&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{fontSize:18}}>✉️</span><a href={`mailto:${contact.work}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.work}</a></div>}
-          {contact.workPhone&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{fontSize:18}}>📞</span><a href={`tel:${contact.workPhone}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.workPhone}</a></div>}
+          {contact.work&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><Icon name="mail" size={18} color={GREEN}/><a href={`mailto:${contact.work}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.work}</a></div>}
+          {contact.workPhone&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><Icon name="phone" size={18} color={GREEN}/><a href={`tel:${contact.workPhone}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.workPhone}</a></div>}
         </div>
-        {contact.showPrivate&&(contact.privatePhone||contact.privateEmail)&&<><Divider/><div style={{marginTop:14}}><div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:10,textTransform:"uppercase",letterSpacing:0.5}}>Privat</div>{contact.privatePhone&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{fontSize:18}}>📱</span><a href={`tel:${contact.privatePhone}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.privatePhone}</a></div>}{contact.privateEmail&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><span style={{fontSize:18}}>✉️</span><a href={`mailto:${contact.privateEmail}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.privateEmail}</a></div>}</div></>}
+        {contact.showPrivate&&(contact.privatePhone||contact.privateEmail)&&<><Divider/><div style={{marginTop:14}}><div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:10,textTransform:"uppercase",letterSpacing:0.5}}>Privat</div>{contact.privatePhone&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><Icon name="phone" size={18} color={GREEN}/><a href={`tel:${contact.privatePhone}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.privatePhone}</a></div>}{contact.privateEmail&&<div style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}><Icon name="mail" size={18} color={GREEN}/><a href={`mailto:${contact.privateEmail}`} style={{color:GREEN,fontSize:14,textDecoration:"none"}}>{contact.privateEmail}</a></div>}</div></>}
         {!contact.showPrivate&&<div style={{marginTop:12,color:"#aaa",fontSize:13}}>Private kontaktoplysninger er ikke synlige.</div>}
       </Card>
     </div>
   );
 }
 
-function NotifRow({label,icon,value,onToggle}){return(<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:"1px solid #f5f5f5"}}><div style={{display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:18,width:26,textAlign:"center"}}>{icon}</span><span style={{fontSize:14,color:"#444"}}>{label}</span></div><Toggle on={value} onToggle={onToggle}/></div>);}
+function NotifRow({label,value,onToggle}){return(<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:"1px solid #f5f5f5"}}><span style={{fontSize:14,color:"#444"}}>{label}</span><Toggle on={value} onToggle={onToggle}/></div>);}
 
 function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
   const [form,setForm]=useState({...profile});
@@ -1670,7 +1709,7 @@ function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
   const getN=(ch,k)=>!!form[nk(ch,k)];
   const togN=(ch,k)=>set(nk(ch,k),!form[nk(ch,k)]);
   const privDisabled=!form.privateEmail;
-  const CHANNELS=[{id:"app",label:"App",icon:"🔔"},{id:"email",label:"Arbejdsmail",icon:"✉️"},{id:"priv",label:"Privatmail",icon:"📱"}];
+  const CHANNELS=[{id:"app",label:"App",icon:"bell"},{id:"email",label:"Arbejdsmail",icon:"mail"},{id:"priv",label:"Privatmail",icon:"phone"}];
   return(
     <div style={{padding:"16px 16px 0"}}>
       <div style={{fontWeight:700,fontSize:24,marginBottom:12}}>Min profil</div>
@@ -1709,22 +1748,22 @@ function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
         <div style={{display:"flex",gap:8,marginBottom:20}}>
           {CHANNELS.map(c=>(
             <button key={c.id} onClick={()=>setChannel(c.id)} style={{flex:1,padding:"12px 8px",borderRadius:14,cursor:"pointer",border:channel===c.id?`2px solid ${GREEN}`:"1.5px solid #e5e7eb",background:channel===c.id?GREEN_LIGHT:"#fff",display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-              <span style={{fontSize:22}}>{c.icon}</span>
+              <Icon name={c.icon} size={22} color={channel===c.id?GREEN:"#9CA3AF"}/>
               <span style={{fontSize:12,fontWeight:channel===c.id?700:500,color:channel===c.id?GREEN:"#555"}}>{c.label}</span>
             </button>
           ))}
         </div>
         {channel==="app"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}><span style={{fontSize:22}}>🔔</span><div><div style={{fontWeight:700,fontSize:15}}>App-notifikationer</div><div style={{color:"#888",fontSize:12}}>Push-beskeder til din telefon</div></div></div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}><Icon name="bell" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>App-notifikationer</div><div style={{color:"#888",fontSize:12}}>Push-beskeder til din telefon</div></div></div>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 0 12px",borderBottom:`2px solid ${GREEN_LIGHT}`,marginBottom:4}}>
             <div><div style={{fontWeight:700,fontSize:14}}>Slå alle til/fra</div><div style={{color:"#999",fontSize:12}}>Overstyre alle indstillinger</div></div>
             <Toggle on={!!form.appNotifMaster} onToggle={()=>set("appNotifMaster",!form.appNotifMaster)}/>
           </div>
           <div style={{opacity:form.appNotifMaster?1:0.38,pointerEvents:form.appNotifMaster?"auto":"none"}}>
-            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} icon={t.icon} value={getN("app",t.key)} onToggle={()=>togN("app",t.key)}/>)}
+            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("app",t.key)} onToggle={()=>togN("app",t.key)}/>)}
           </div>
           <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid #f0f0f0"}}>
-            <div style={{fontWeight:700,fontSize:13,color:"#555",marginBottom:4}}>🌙 Stille timer</div>
+            <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,fontSize:13,color:"#555",marginBottom:4}}><Icon name="clock" size={14} color="#555"/> Stille timer</div>
             <div style={{color:"#999",fontSize:12,marginBottom:10}}>Ingen notifikationer i dette tidsrum</div>
             <div style={{display:"flex",gap:12,alignItems:"center"}}>
               <div style={{flex:1}}><label style={{fontSize:12,color:"#888",display:"block",marginBottom:4}}>Fra</label><input type="time" defaultValue="22:00" style={{...inp,padding:"8px 10px"}}/></div>
@@ -1734,13 +1773,13 @@ function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
           </div>
         </Card>}
         {channel==="email"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><span style={{fontSize:22}}>✉️</span><div><div style={{fontWeight:700,fontSize:15}}>Arbejdsmail</div><div style={{color:"#888",fontSize:12}}>{form.workEmail||"–"}</div></div></div>
-          {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} icon={t.icon} value={getN("email",t.key)} onToggle={()=>togN("email",t.key)}/>)}
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><Icon name="mail" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>Arbejdsmail</div><div style={{color:"#888",fontSize:12}}>{form.workEmail||"–"}</div></div></div>
+          {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("email",t.key)} onToggle={()=>togN("email",t.key)}/>)}
         </Card>}
         {channel==="priv"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><span style={{fontSize:22}}>📱</span><div><div style={{fontWeight:700,fontSize:15}}>Privatmail</div><div style={{color:"#888",fontSize:12}}>{form.privateEmail||"Ingen privatmail – tilføj under Profil"}</div></div></div>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><Icon name="phone" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>Privatmail</div><div style={{color:"#888",fontSize:12}}>{form.privateEmail||"Ingen privatmail – tilføj under Profil"}</div></div></div>
           <div style={{opacity:privDisabled?0.38:1,pointerEvents:privDisabled?"none":"auto"}}>
-            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} icon={t.icon} value={getN("priv",t.key)} onToggle={()=>!privDisabled&&togN("priv",t.key)}/>)}
+            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("priv",t.key)} onToggle={()=>!privDisabled&&togN("priv",t.key)}/>)}
           </div>
           {privDisabled&&<div style={{marginTop:14,background:GREEN_LIGHT,borderRadius:10,padding:"10px 14px",fontSize:13,color:GREEN}}>Gå til <strong>Profil</strong>-fanen og tilføj en privat e-mail for at aktivere.</div>}
         </Card>}
@@ -1915,7 +1954,10 @@ function VejviserSubTab({onContactClick}){
   filtered.forEach(c=>{const l=c.name[0].toUpperCase();if(!groups[l])groups[l]=[];groups[l].push(c);});
   return(
     <div>
-      <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="🔍  Søg navn eller stilling..." style={{...inp,marginBottom:16}}/>
+      <div style={{position:"relative",marginBottom:16}}>
+        <svg style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",pointerEvents:"none"}} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Søg navn eller stilling..." style={{...inp,paddingLeft:38}}/>
+      </div>
       {Object.keys(groups).sort().map(letter=>(
         <div key={letter}>
           <div style={{fontWeight:700,fontSize:13,color:GREEN,marginBottom:6,marginTop:4,letterSpacing:1}}>{letter}</div>
@@ -1924,7 +1966,7 @@ function VejviserSubTab({onContactClick}){
               <div style={{display:"flex",alignItems:"center",gap:14}}>
                 <div style={{width:44,height:44,borderRadius:"50%",background:GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:GREEN,flexShrink:0}}>{ct.name.split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
                 <div style={{flex:1}}><div style={{fontWeight:700,fontSize:15}}>{ct.name}</div><div style={{color:"#888",fontSize:13}}>{ct.title}</div></div>
-                {ct.showPrivate&&<span style={{fontSize:12,color:GREEN}}>📞</span>}
+                {ct.showPrivate&&<Icon name="phone" size={14} color={GREEN}/>}
               </div>
             </Card>
           ))}
@@ -2014,7 +2056,81 @@ const INIT_PROFILE={
   notif_priv_Tidsregistrering:false,notif_priv_Byt:false,notif_priv_Onske:false,notif_priv_Udbud:false,notif_priv_Beskeder:false,notif_priv_Glob:false,
 };
 
+function LoginScreen({onLogin}){
+  const [code,setCode]=useState("");
+  const [error,setError]=useState(false);
+  const [shake,setShake]=useState(false);
+
+  const handleDigit=d=>{
+    if(code.length>=4)return;
+    const next=code+d;
+    setCode(next);
+    setError(false);
+    if(next.length===4){
+      if(next==="1234"){
+        setTimeout(()=>onLogin(),200);
+      } else {
+        setTimeout(()=>{
+          setError(true);
+          setShake(true);
+          setTimeout(()=>{setCode("");setShake(false);},600);
+        },200);
+      }
+    }
+  };
+  const handleDel=()=>{setCode(c=>c.slice(0,-1));setError(false);};
+
+  const dots=Array.from({length:4},(_,i)=>({filled:i<code.length}));
+  const keys=[["1","2","3"],["4","5","6"],["7","8","9"],["","0","⌫"]];
+
+  return(
+    <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",minHeight:"100vh",background:"#f3f4f6",padding:24,fontFamily:"-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"}}>
+      {/* Logo area */}
+      <div style={{marginBottom:40,textAlign:"center"}}>
+        <div style={{width:72,height:72,borderRadius:22,background:GREEN,display:"flex",alignItems:"center",justifyContent:"center",margin:"0 auto 16px",boxShadow:"0 8px 24px rgba(45,106,79,0.35)"}}>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div style={{fontWeight:800,fontSize:26,color:"#111",letterSpacing:-0.5}}>Min Vagtplan</div>
+        <div style={{color:"#9CA3AF",fontSize:14,marginTop:4}}>Indtast din PIN-kode</div>
+      </div>
+
+      {/* Dots */}
+      <div style={{display:"flex",gap:18,marginBottom:36,transform:shake?"translateX(-6px)":"none",transition:"transform 0.1s"}}>
+        {dots.map((dot,i)=>(
+          <div key={i} style={{width:18,height:18,borderRadius:"50%",background:error?"#EF4444":dot.filled?GREEN:"transparent",border:"2px solid "+(error?"#EF4444":dot.filled?GREEN:"#D1D5DB"),transition:"background 0.15s, border-color 0.15s"}}/>
+        ))}
+      </div>
+      {error&&<div style={{color:"#EF4444",fontSize:13,marginTop:-24,marginBottom:20,fontWeight:500}}>Forkert kode – prøv igen</div>}
+
+      {/* Keypad */}
+      <div style={{display:"grid",gridTemplateColumns:"repeat(3,72px)",gap:14}}>
+        {keys.flat().map((k,i)=>{
+          if(k==="")return <div key={i}/>;
+          const isDel=k==="⌫";
+          return(
+            <button key={i} onClick={()=>isDel?handleDel():handleDigit(k)}
+              style={{width:72,height:72,borderRadius:"50%",border:"none",background:isDel?"transparent":"#fff",fontSize:isDel?22:26,fontWeight:isDel?400:500,color:"#111",cursor:"pointer",boxShadow:isDel?"none":"0 2px 8px rgba(0,0,0,0.08)",display:"flex",alignItems:"center",justifyContent:"center",transition:"background 0.1s",WebkitTapHighlightColor:"transparent"}}
+              onMouseDown={e=>e.currentTarget.style.background=isDel?"rgba(0,0,0,0.05)":"#f0f0f0"}
+              onMouseUp={e=>e.currentTarget.style.background=isDel?"transparent":"#fff"}
+              onTouchStart={e=>e.currentTarget.style.background=isDel?"rgba(0,0,0,0.05)":"#f0f0f0"}
+              onTouchEnd={e=>e.currentTarget.style.background=isDel?"transparent":"#fff"}
+            >{k}</button>
+          );
+        })}
+      </div>
+
+      <div style={{marginTop:40,color:"#C4C4C4",fontSize:12}}>Glemt kode? Kontakt din leder</div>
+    </div>
+  );
+}
+
 function App(){
+  const [loggedIn, setLoggedIn] = useState(false);
   const [mainTab,  setMainTab]   = useState("oversigt");
   const [screen,   setScreen]    = useState(null);
   const [showCreate, setCreate]  = useState(false);
@@ -2036,6 +2152,13 @@ function App(){
 
   const anmodCount = BYT_ITEMS.filter(i=>i.status.startsWith("Afventer")).length;
 
+  if(!loggedIn) return(
+    <div style={{display:"flex",justifyContent:"center",background:"#f3f4f6",minHeight:"100vh"}}>
+      <div style={{width:"100%",maxWidth:390}}>
+        <LoginScreen onLogin={()=>setLoggedIn(true)}/>
+      </div>
+    </div>
+  );
   return(
     <div style={{fontFamily:"-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",background:"#f3f4f6",minHeight:"100vh",display:"flex",justifyContent:"center"}}>
       <div style={{width:"100%",maxWidth:390,background:"#f3f4f6",minHeight:"100vh",position:"relative"}}>
