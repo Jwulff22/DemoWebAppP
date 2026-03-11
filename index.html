@@ -1695,9 +1695,8 @@ function ContactDetailScreen({contact,onBack}){
 
 function NotifRow({label,value,onToggle}){return(<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 0",borderBottom:"1px solid #f5f5f5"}}><span style={{fontSize:14,color:"#444"}}>{label}</span><Toggle on={value} onToggle={onToggle}/></div>);}
 
-function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
+function ProfilScreen({profile,onSave,embedded=false}){
   const [form,setForm]=useState({...profile});
-  const [tab,setTab]=useState(startTab);
   const [channel,setChannel]=useState("app");
   const [saved,setSaved]=useState(false);
   const [pwForm,setPwForm]=useState({old:"",n1:"",n2:""});
@@ -1710,96 +1709,100 @@ function ProfilScreen({profile,onSave,embedded=false,startTab="Profil"}){
   const togN=(ch,k)=>set(nk(ch,k),!form[nk(ch,k)]);
   const privDisabled=!form.privateEmail;
   const CHANNELS=[{id:"app",label:"App",icon:"bell"},{id:"email",label:"Arbejdsmail",icon:"mail"},{id:"priv",label:"Privatmail",icon:"phone"}];
+  const SectionHeader=({title})=>(
+    <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:12,marginTop:24,textTransform:"uppercase",letterSpacing:0.6}}>{title}</div>
+  );
   return(
-    <div style={{padding:"16px 16px 0"}}>
-      <div style={{fontWeight:700,fontSize:24,marginBottom:12}}>Min profil</div>
-      <div style={{display:"flex",gap:6,marginBottom:20,overflowX:"auto"}}>
-        {["Profil","Notifikationer","Adgangskode","Kalender"].map(t=>(
-          <button key={t} onClick={()=>{setTab(t);setSaved(false);setPwMsg("");}} style={{padding:"8px 14px",borderRadius:20,border:tab===t?"1.5px solid #d1d5db":"none",background:tab===t?"#fff":"transparent",fontWeight:tab===t?700:400,fontSize:13,cursor:"pointer",flexShrink:0,color:"#111"}}>{t}</button>
+    <div style={{padding:"0 16px"}}>
+      {/* Avatar */}
+      <div style={{display:"flex",justifyContent:"center",marginBottom:20,marginTop:8}}>
+        <div style={{position:"relative"}}>
+          <div style={{width:80,height:80,borderRadius:"50%",background:GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:700,color:GREEN}}>{form.name.split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
+          <button style={{position:"absolute",bottom:0,right:0,width:26,height:26,borderRadius:"50%",background:GREEN,color:"#fff",border:"2px solid #fff",cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>✎</button>
+        </div>
+      </div>
+
+      {/* Personlige oplysninger */}
+      <SectionHeader title="Personlige oplysninger"/>
+      <Card>
+        {[{label:"Fulde navn",key:"name",type:"text"},{label:"Stilling",key:"title",type:"text"},{label:"Arbejdsmail",key:"workEmail",type:"email"},{label:"Arbejdstelefon",key:"workPhone",type:"tel"}].map(f=>(
+          <div key={f.key} style={{marginBottom:14}}><label style={{fontSize:13,color:"#888",display:"block",marginBottom:4}}>{f.label}</label><input type={f.type} value={form[f.key]||""} onChange={e=>set(f.key,e.target.value)} style={inp}/></div>
+        ))}
+      </Card>
+
+      {/* Private kontaktoplysninger */}
+      <SectionHeader title="Private kontaktoplysninger"/>
+      <Card>
+        <div style={{color:"#999",fontSize:12,marginBottom:14}}>Vises kun for kollegaer hvis du tillader det.</div>
+        {[{label:"Privat telefon",key:"privatePhone",type:"tel"},{label:"Privat e-mail",key:"privateEmail",type:"email"}].map(f=>(
+          <div key={f.key} style={{marginBottom:14}}><label style={{fontSize:13,color:"#888",display:"block",marginBottom:4}}>{f.label}</label><input type={f.type} value={form[f.key]||""} onChange={e=>set(f.key,e.target.value)} style={inp}/></div>
+        ))}
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingTop:4}}>
+          <span style={{fontSize:14,color:"#555"}}>Vis private oplysninger for kollegaer</span>
+          <Toggle on={!!form.showPrivate} onToggle={()=>set("showPrivate",!form.showPrivate)}/>
+        </div>
+      </Card>
+      <button onClick={handleSave} style={{...btnP,width:"100%",marginBottom:4}}>{saved?"✓ Gemt!":"Gem ændringer"}</button>
+
+      {/* Notifikationer */}
+      <SectionHeader title="Notifikationer"/>
+      <div style={{display:"flex",gap:8,marginBottom:14}}>
+        {CHANNELS.map(c=>(
+          <button key={c.id} onClick={()=>setChannel(c.id)} style={{flex:1,padding:"10px 8px",borderRadius:14,cursor:"pointer",border:channel===c.id?`2px solid ${GREEN}`:"1.5px solid #e5e7eb",background:channel===c.id?GREEN_LIGHT:"#fff",display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
+            <Icon name={c.icon} size={20} color={channel===c.id?GREEN:"#9CA3AF"}/>
+            <span style={{fontSize:11,fontWeight:channel===c.id?700:500,color:channel===c.id?GREEN:"#555"}}>{c.label}</span>
+          </button>
         ))}
       </div>
-      {tab==="Profil"&&<>
-        <div style={{display:"flex",justifyContent:"center",marginBottom:20}}>
-          <div style={{position:"relative"}}>
-            <div style={{width:80,height:80,borderRadius:"50%",background:GREEN_LIGHT,display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:700,color:GREEN}}>{form.name.split(" ").map(n=>n[0]).join("").slice(0,2)}</div>
-            <button style={{position:"absolute",bottom:0,right:0,width:26,height:26,borderRadius:"50%",background:GREEN,color:"#fff",border:"2px solid #fff",cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",justifyContent:"center"}}>✎</button>
+      {channel==="app"&&<Card>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"4px 0 12px",borderBottom:`1px solid ${GREEN_LIGHT}`,marginBottom:4}}>
+          <div><div style={{fontWeight:700,fontSize:14}}>Slå alle til/fra</div><div style={{color:"#999",fontSize:12}}>Overstyre alle indstillinger</div></div>
+          <Toggle on={!!form.appNotifMaster} onToggle={()=>set("appNotifMaster",!form.appNotifMaster)}/>
+        </div>
+        <div style={{opacity:form.appNotifMaster?1:0.38,pointerEvents:form.appNotifMaster?"auto":"none"}}>
+          {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("app",t.key)} onToggle={()=>togN("app",t.key)}/>)}
+        </div>
+        <div style={{marginTop:14,paddingTop:12,borderTop:"1px solid #f0f0f0"}}>
+          <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,fontSize:13,color:"#555",marginBottom:4}}><Icon name="clock" size={14} color="#555"/> Stille timer</div>
+          <div style={{color:"#999",fontSize:12,marginBottom:10}}>Ingen notifikationer i dette tidsrum</div>
+          <div style={{display:"flex",gap:12,alignItems:"center"}}>
+            <div style={{flex:1}}><label style={{fontSize:12,color:"#888",display:"block",marginBottom:4}}>Fra</label><input type="time" defaultValue="22:00" style={{...inp,padding:"8px 10px"}}/></div>
+            <div style={{color:"#ccc",paddingTop:18}}>–</div>
+            <div style={{flex:1}}><label style={{fontSize:12,color:"#888",display:"block",marginBottom:4}}>Til</label><input type="time" defaultValue="07:00" style={{...inp,padding:"8px 10px"}}/></div>
           </div>
         </div>
-        <Card>
-          <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:14,textTransform:"uppercase",letterSpacing:0.5}}>Personlige oplysninger</div>
-          {[{label:"Fulde navn",key:"name",type:"text"},{label:"Stilling",key:"title",type:"text"},{label:"Arbejdsmail",key:"workEmail",type:"email"},{label:"Arbejdstelefon",key:"workPhone",type:"tel"}].map(f=>(
-            <div key={f.key} style={{marginBottom:14}}><label style={{fontSize:13,color:"#888",display:"block",marginBottom:4}}>{f.label}</label><input type={f.type} value={form[f.key]||""} onChange={e=>set(f.key,e.target.value)} style={inp}/></div>
-          ))}
-        </Card>
-        <Card>
-          <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:6,textTransform:"uppercase",letterSpacing:0.5}}>Private kontaktoplysninger</div>
-          <div style={{color:"#999",fontSize:12,marginBottom:14}}>Vises kun for kollegaer hvis du tillader det.</div>
-          {[{label:"Privat telefon",key:"privatePhone",type:"tel"},{label:"Privat e-mail",key:"privateEmail",type:"email"}].map(f=>(
-            <div key={f.key} style={{marginBottom:14}}><label style={{fontSize:13,color:"#888",display:"block",marginBottom:4}}>{f.label}</label><input type={f.type} value={form[f.key]||""} onChange={e=>set(f.key,e.target.value)} style={inp}/></div>
-          ))}
-          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",paddingTop:4}}>
-            <span style={{fontSize:14,color:"#555"}}>Vis private oplysninger for kollegaer</span>
-            <Toggle on={!!form.showPrivate} onToggle={()=>set("showPrivate",!form.showPrivate)}/>
-          </div>
-        </Card>
-        <button onClick={handleSave} style={{...btnP,width:"100%",marginBottom:24}}>{saved?"✓ Gemt!":"Gem ændringer"}</button>
-      </>}
-      {tab==="Notifikationer"&&<>
-        <div style={{display:"flex",gap:8,marginBottom:20}}>
-          {CHANNELS.map(c=>(
-            <button key={c.id} onClick={()=>setChannel(c.id)} style={{flex:1,padding:"12px 8px",borderRadius:14,cursor:"pointer",border:channel===c.id?`2px solid ${GREEN}`:"1.5px solid #e5e7eb",background:channel===c.id?GREEN_LIGHT:"#fff",display:"flex",flexDirection:"column",alignItems:"center",gap:4}}>
-              <Icon name={c.icon} size={22} color={channel===c.id?GREEN:"#9CA3AF"}/>
-              <span style={{fontSize:12,fontWeight:channel===c.id?700:500,color:channel===c.id?GREEN:"#555"}}>{c.label}</span>
-            </button>
-          ))}
+      </Card>}
+      {channel==="email"&&<Card>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}><Icon name="mail" size={20} color={GREEN}/><div><div style={{fontWeight:700,fontSize:14}}>Arbejdsmail</div><div style={{color:"#888",fontSize:12}}>{form.workEmail||"–"}</div></div></div>
+        {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("email",t.key)} onToggle={()=>togN("email",t.key)}/>)}
+      </Card>}
+      {channel==="priv"&&<Card>
+        <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}><Icon name="phone" size={20} color={GREEN}/><div><div style={{fontWeight:700,fontSize:14}}>Privatmail</div><div style={{color:"#888",fontSize:12}}>{form.privateEmail||"Ingen privatmail – tilføj ovenfor"}</div></div></div>
+        <div style={{opacity:privDisabled?0.38:1,pointerEvents:privDisabled?"none":"auto"}}>
+          {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("priv",t.key)} onToggle={()=>!privDisabled&&togN("priv",t.key)}/>)}
         </div>
-        {channel==="app"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:6}}><Icon name="bell" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>App-notifikationer</div><div style={{color:"#888",fontSize:12}}>Push-beskeder til din telefon</div></div></div>
-          <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"14px 0 12px",borderBottom:`2px solid ${GREEN_LIGHT}`,marginBottom:4}}>
-            <div><div style={{fontWeight:700,fontSize:14}}>Slå alle til/fra</div><div style={{color:"#999",fontSize:12}}>Overstyre alle indstillinger</div></div>
-            <Toggle on={!!form.appNotifMaster} onToggle={()=>set("appNotifMaster",!form.appNotifMaster)}/>
-          </div>
-          <div style={{opacity:form.appNotifMaster?1:0.38,pointerEvents:form.appNotifMaster?"auto":"none"}}>
-            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("app",t.key)} onToggle={()=>togN("app",t.key)}/>)}
-          </div>
-          <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid #f0f0f0"}}>
-            <div style={{display:"flex",alignItems:"center",gap:6,fontWeight:700,fontSize:13,color:"#555",marginBottom:4}}><Icon name="clock" size={14} color="#555"/> Stille timer</div>
-            <div style={{color:"#999",fontSize:12,marginBottom:10}}>Ingen notifikationer i dette tidsrum</div>
-            <div style={{display:"flex",gap:12,alignItems:"center"}}>
-              <div style={{flex:1}}><label style={{fontSize:12,color:"#888",display:"block",marginBottom:4}}>Fra</label><input type="time" defaultValue="22:00" style={{...inp,padding:"8px 10px"}}/></div>
-              <div style={{color:"#ccc",paddingTop:18}}>–</div>
-              <div style={{flex:1}}><label style={{fontSize:12,color:"#888",display:"block",marginBottom:4}}>Til</label><input type="time" defaultValue="07:00" style={{...inp,padding:"8px 10px"}}/></div>
-            </div>
-          </div>
-        </Card>}
-        {channel==="email"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><Icon name="mail" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>Arbejdsmail</div><div style={{color:"#888",fontSize:12}}>{form.workEmail||"–"}</div></div></div>
-          {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("email",t.key)} onToggle={()=>togN("email",t.key)}/>)}
-        </Card>}
-        {channel==="priv"&&<Card>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}><Icon name="phone" size={22} color={GREEN}/><div><div style={{fontWeight:700,fontSize:15}}>Privatmail</div><div style={{color:"#888",fontSize:12}}>{form.privateEmail||"Ingen privatmail – tilføj under Profil"}</div></div></div>
-          <div style={{opacity:privDisabled?0.38:1,pointerEvents:privDisabled?"none":"auto"}}>
-            {NOTIF_TYPES.map(t=><NotifRow key={t.key} label={t.label} value={getN("priv",t.key)} onToggle={()=>!privDisabled&&togN("priv",t.key)}/>)}
-          </div>
-          {privDisabled&&<div style={{marginTop:14,background:GREEN_LIGHT,borderRadius:10,padding:"10px 14px",fontSize:13,color:GREEN}}>Gå til <strong>Profil</strong>-fanen og tilføj en privat e-mail for at aktivere.</div>}
-        </Card>}
-        <button onClick={handleSave} style={{...btnP,width:"100%",marginBottom:24}}>{saved?"✓ Gemt!":"Gem notifikationsindstillinger"}</button>
-      </>}
-      {tab==="Adgangskode"&&<Card>
-        <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:16,textTransform:"uppercase",letterSpacing:0.5}}>Skift adgangskode</div>
+        {privDisabled&&<div style={{marginTop:14,background:GREEN_LIGHT,borderRadius:10,padding:"10px 14px",fontSize:13,color:GREEN}}>Tilføj en privat e-mail ovenfor for at aktivere.</div>}
+      </Card>}
+      <button onClick={handleSave} style={{...btnP,width:"100%",marginBottom:4}}>{saved?"✓ Gemt!":"Gem notifikationsindstillinger"}</button>
+
+      {/* Adgangskode */}
+      <SectionHeader title="Adgangskode"/>
+      <Card>
         {[{label:"Nuværende adgangskode",key:"old",ph:"••••••••"},{label:"Ny adgangskode",key:"n1",ph:"Mindst 8 tegn"},{label:"Gentag ny adgangskode",key:"n2",ph:"••••••••"}].map(f=>(
           <div key={f.key} style={{marginBottom:14}}><label style={{fontSize:13,color:"#888",display:"block",marginBottom:4}}>{f.label}</label><input type="password" value={pwForm[f.key]} placeholder={f.ph} onChange={e=>setPwForm(pf=>({...pf,[f.key]:e.target.value}))} style={inp}/></div>
         ))}
         {pwMsg&&<div style={{color:pwMsg.startsWith("✓")?GREEN:BADGE_RED,fontSize:13,marginBottom:12}}>{pwMsg}</div>}
         <button onClick={handlePw} style={{...btnP,width:"100%"}}>Gem ny adgangskode</button>
-      </Card>}
-      {tab==="Kalender"&&<Card>
-        <div style={{fontWeight:700,fontSize:12,color:"#888",marginBottom:12,textTransform:"uppercase",letterSpacing:0.5}}>Kalenderlink</div>
-        <div style={{color:"#555",fontSize:14,lineHeight:1.6,marginBottom:16}}>Kopiér linket og tilføj det til din privatkalender. Tjenester opdateres én gang i døgnet.</div>
-        <div style={{background:"#f3f4f6",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",wordBreak:"break-all",marginBottom:16,fontFamily:"monospace"}}>https://vagtplan.hospital.dk/ical/ABC123XYZ?token=eyJhbGciOiJIUzI1NiJ9</div>
+      </Card>
+
+      {/* Kalenderlink */}
+      <SectionHeader title="Kalenderlink"/>
+      <Card style={{marginBottom:40}}>
+        <div style={{color:"#555",fontSize:14,lineHeight:1.6,marginBottom:14}}>Kopiér linket og tilføj det til din privatkalender. Tjenester opdateres én gang i døgnet.</div>
+        <div style={{background:"#f3f4f6",borderRadius:10,padding:"10px 14px",fontSize:12,color:"#555",wordBreak:"break-all",marginBottom:14,fontFamily:"monospace"}}>https://vagtplan.hospital.dk/ical/ABC123XYZ?token=eyJhbGciOiJIUzI1NiJ9</div>
         <button onClick={()=>alert("Link kopieret!")} style={{...btnP,width:"100%",marginBottom:8}}>Kopiér link</button>
         <button style={{...btnS,width:"100%"}}>Opdatér kalender nu</button>
-      </Card>}
+      </Card>
     </div>
   );
 }
@@ -2012,7 +2015,7 @@ function MigScreen({profile, onSave}){
       <div style={{fontWeight:700,fontSize:24,marginBottom:14}}>Mig</div>
       {/* Top tab bar */}
       <div style={{display:"flex",gap:0,marginBottom:20,background:"#f3f4f6",borderRadius:12,padding:3}}>
-        {["Profil","Saldi","Indstillinger"].map(t=>(
+        {["Profil","Saldi"].map(t=>(
           <button key={t} onClick={()=>setTab(t)}
             style={{flex:1,padding:"9px 0",borderRadius:10,border:"none",
               background:tab===t?"#fff":"transparent",fontWeight:tab===t?700:400,
@@ -2024,7 +2027,6 @@ function MigScreen({profile, onSave}){
       </div>
       {tab==="Profil"&&<ProfilScreen profile={profile} onSave={onSave} embedded={true}/>}
       {tab==="Saldi"&&<SaldiScreen embedded={true}/>}
-      {tab==="Indstillinger"&&<ProfilScreen profile={profile} onSave={onSave} embedded={true} startTab="Notifikationer"/>}
     </div>
   );
 }
